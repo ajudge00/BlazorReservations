@@ -1,3 +1,4 @@
-BlazorReservations/bin
-BlazorReservations/obj
-.vs
+BlazorReservations/bin/
+BlazorReservations/obj/
+.vs/
+.github/
