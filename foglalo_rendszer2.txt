@@ -1,0 +1,42 @@
+foglalás tábla
+--------------
+tól dátum
+ig dátum
+kicsodaId int
+mitId int
+mennyiért pénz
+megjegyzés szöveg
+ 
+ 
+személyek
+----
+id int
+név szöveg
+ 
+ 
+dolgok
+----
+id int
+név szöveg
+kategóriaID int
+ 
+ 
+kategóriák
+----
+id int
+név szöveg
+ 
+ 
+blazor serverside
+EF
+mysql
+ 
+CRUD mindenre
+ 
+dátum ütközés figyelés
+intervallumok ne ütközzenek
+ne legyen átfedés és lyuk se
+ 
+"deadline": 2025.4.15
+ 
+ 

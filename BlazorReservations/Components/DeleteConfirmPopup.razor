@@ -1,0 +1,44 @@
+﻿@if (Visible)
+{
+    <div class="confirm-dialog-overlay">
+        <div class="confirm-dialog">
+            <h3>Biztos törölni kívánja az elemet?</h3>
+            @if (ItemName != null)
+            {
+                <p><strong>@ItemName</strong></p>
+            }
+            <div class="d-flex flex-row justify-content-end mt-3">
+                <button @onclick="Cancel" class="btn btn-secondary">
+                    Mégse
+                </button>
+                <button @onclick="Confirm" class="btn btn-danger ms-3">
+                    Törlés
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public bool Visible { get; set; }
+
+    [Parameter]
+    public string? ItemName { get; set; }
+
+    [Parameter]
+    public EventCallback OnCancel { get; set; }
+
+    [Parameter]
+    public EventCallback OnConfirm { get; set; }
+
+    private void Cancel()
+    {
+        OnCancel.InvokeAsync();
+    }
+
+    private void Confirm()
+    {
+        OnConfirm.InvokeAsync();
+    }
+}

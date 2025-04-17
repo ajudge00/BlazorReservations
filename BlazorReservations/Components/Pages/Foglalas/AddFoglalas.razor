@@ -1,0 +1,125 @@
+﻿@page "/foglalasok/uj"
+@inject IFoglalasRepository FoglalasRepo
+@inject IVendegRepository VendegRepo
+@inject ISzobaRepository SzobaRepo
+@inject NavigationManager Navigation
+
+<PageTitle>
+    Új foglalás
+</PageTitle>
+
+<a class="btn btn-primary" href="/foglalasok">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-return-left" viewBox="0 0 16 16">
+        <path fill-rule="evenodd" d="M14.5 1.5a.5.5 0 0 1 .5.5v4.8a2.5 2.5 0 0 1-2.5 2.5H2.707l3.347 3.346a.5.5 0 0 1-.708.708l-4.2-4.2a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 8.3H12.5A1.5 1.5 0 0 0 14 6.8V2a.5.5 0 0 1 .5-.5" />
+    </svg> Mégse
+</a>
+
+<div class="row justify-content-center mt-5">
+    <div class="col-6">
+        <EditForm method="post" FormName="CreateFoglalasForm" Model="Foglalas" OnValidSubmit="CreateFoglalas" autocomplete="off">
+            <h3>Új foglalás</h3>
+            <div class="mb-3">
+                <div id="idopont" class="mt-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <label class="form-label" for="kezdete">Kezdete:</label>
+                            <InputDate id="kezdete" @bind-Value="Foglalas.Kezdete" class="form-control mb-3" />
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label" for="ora">Óra:</label>
+                            <InputNumber class="form-control mb-3" id="ora" @bind-Value="Ora" />
+                        </div>
+                        <div class="col-sm">
+                            <label class="form-label" for="perc">Perc:</label>
+                            <InputNumber class="form-control mb-3" id="perc" @bind-Value="Perc" />
+                        </div>
+                    </div>
+                </div>
+
+                <label class="form-label" for="ejszakakszama">Éjszakák száma:</label>
+                <InputNumber class="form-control mb-3" id="ejszakakszama" @bind-Value="Foglalas.EjszakakSzama" />
+
+                <label class="form-label" for="vendeg">Vendég</label>
+                <InputSelect id="vendeg" class="form-control mb-3 form-select" @bind-Value="Foglalas.VendegId" disabled="@VendegSelectIsDisabled">
+                    @if (VendegSelectIsDisabled)
+                    {
+                        <option>Nincsenek vendégek</option>
+                    }
+                    else
+                    {
+                        @foreach (var vendeg in Vendegek)
+                        {
+                            <option value="@vendeg.Id">@vendeg.Nev</option>
+                        }
+                    }
+                </InputSelect>
+
+                <label class="form-label" for="szoba">Szoba</label>
+                <InputSelect id="szoba" class="form-control mb-3 form-select" @bind-Value="Foglalas.SzobaId" disabled="@SzobaSelectIsDisabled">
+                    @if (SzobaSelectIsDisabled)
+                    {
+                        <option>Nincsenek szobák</option>
+                    }
+                    else
+                    {
+                        @foreach (var szoba in Szobak)
+                        {
+                            <option value="@szoba.Id">@szoba.SzobaSzam</option>
+                        }
+                    }
+                </InputSelect>
+
+                <label class="form-label" for="szemelyek">Személyek száma</label>
+                <InputNumber class="form-control mb-3" id="szemelyek" @bind-Value="Foglalas.SzemelyekSzama" />
+
+                <label class="form-label" for="megjegyzes">Megjegyzés</label>
+                <InputTextArea class="form-control mb-3" id="megjegyzes" @bind-Value="Foglalas.Megjegyzes"/>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-success">Mentés</button>
+            </div>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+        </EditForm>
+    </div>
+</div>
+
+
+@code {
+    [SupplyParameterFromForm]
+    public Foglalas Foglalas { get; set; } = new();
+    public List<Vendeg>? Vendegek { get; set; }
+    public List<Szoba>? Szobak { get; set; }
+    public bool VendegSelectIsDisabled = true;
+    public bool SzobaSelectIsDisabled = true;
+    private DateTime MinDate = DateTime.Today;
+
+    [SupplyParameterFromForm]
+    public int Ora { get; set; }
+
+    [SupplyParameterFromForm]
+    public int Perc { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Vendegek = await VendegRepo.ReadAllAsync();
+        if (Vendegek is not null && Vendegek.Count != 0)
+        {
+            VendegSelectIsDisabled = false;
+
+        }
+
+        Szobak = await SzobaRepo.ReadAllAsync();
+        if (Szobak is not null && Szobak.Count != 0)
+        {
+            SzobaSelectIsDisabled = false;
+        }
+    }
+
+    private async Task CreateFoglalas()
+    {
+
+        await FoglalasRepo.CreateAsync(Foglalas);
+        Navigation.NavigateTo("/foglalasok");
+    }
+}

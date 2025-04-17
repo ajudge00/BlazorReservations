@@ -1,0 +1,4 @@
+1. tervezés
+	- a leírás alapján kitaláltam a táblákat/classokat
+2. megvalósítás
+	- blank solutionből indultam ki

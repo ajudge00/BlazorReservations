@@ -1,0 +1,24 @@
+Foglalas
+	Id: 			int
+	Kezdete:		datetime
+	EjszakakSzama:		int
+	VendegId: 		int
+	SzobaId: 		int
+	SzemelyekSzama:		int
+	Megjegyzes:		string
+
+Vendeg
+	Id:			int
+	Nev:			string
+	Szuletett:		date
+
+Szoba
+	Id:			int
+	Szobaszam:		int
+	AgyakSzama:		int
+	KategoriaId:		int
+
+SzobaKategoria:
+	Id:			int
+	Megnevezes:		string
+	EgysegAr:		int

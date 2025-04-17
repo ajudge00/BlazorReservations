@@ -1,0 +1,38 @@
+foglaló rendszer
+
+tábla:
+	valamit kér valaki mettől meddig x pénzért + megjegyzés
+	ki kérte
+	külön tábla hogy mit
+
+fő foglalás tábla
+	tól dátum
+	ig dátum
+	kicsodaId int
+	mitId int
+	mennyiért pénz
+gyerek tábla:
+	személyek
+		id int
+		név szöveg
+	dolgok
+		id int
+		név szöveg
+		kategória id
+	kategória
+		id int
+		név szöveg
+
+lut-oknak listázó-rögzítő képernyő
+utána foglalásoknak CRUD
+
+blazor ssr (beépített cuccok) + mysql + entity framework
+	code first
+	legyen meg a mysql create script
+	intDI
+
+dátum ütközésvizsgálat
+	átfedés vagy lyuk nem lehet közöttük
+
+04.15-ig
+	vs solution-t küldjek
