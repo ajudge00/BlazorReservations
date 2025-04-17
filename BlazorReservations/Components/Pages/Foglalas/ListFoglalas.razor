@@ -25,6 +25,7 @@ else
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Kezdete</th>
+                <th scope="col">Vége</th>
                 <th scope="col">Éjszakák száma</th>
                 <th scope="col">Vendég</th>
                 <th scope="col">Szoba</th>
@@ -37,7 +38,8 @@ else
             {
                 <tr>
                     <th scope="row">@foglalas.Id</th>
-                    <td>@foglalas.Kezdete</td>
+                    <td>@(foglalas.Kezdete.ToString("yyyy.MM.dd. hh:mm"))</td>
+                    <td>@(GetFoglalasVege(foglalas.Kezdete, foglalas.EjszakakSzama).ToString("yyyy.MM.dd. hh:mm"))</td>
                     <td>@foglalas.EjszakakSzama</td>
                     <td>@foglalas.VendegRef?.Nev</td>
                     <td>@foglalas.SzobaRef?.SzobaSzam</td>
@@ -98,5 +100,17 @@ else
         Foglalasok = await FoglalasRepo.ReadAllAsync();
         ShowDeleteConfirmDialog = false;
         StateHasChanged();
+    }
+
+    private DateTime GetFoglalasVege(DateTime kezdete, int ejszakakSzama)
+    {
+        return new DateTime(
+            kezdete.Year,
+            kezdete.Month,
+            kezdete.Day + ejszakakSzama,
+            11,
+            0,
+            0
+        );
     }
 }

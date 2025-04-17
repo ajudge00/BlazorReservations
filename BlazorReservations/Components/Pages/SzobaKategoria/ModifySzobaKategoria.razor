@@ -1,6 +1,8 @@
 ﻿@page "/szobak/kategoriak/modosit/{id:int}"
 @inject ISzobaRepository SzobaRepo
+@inject IValidationService Validation
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>
     Kategória módosítása
@@ -16,7 +18,7 @@
     <div class="col-6">
         @if (Kategoria is not null)
         {
-            <EditForm Enhance="true" method="post" FormName="UpdateKategoriaForm" Model="Kategoria" OnValidSubmit="UpdateKategoria" autocomplete="off">
+            <EditForm FormName="UpdateKategoriaForm" Model="Kategoria" OnValidSubmit="UpdateKategoria" autocomplete="off">
                 <h3>Kategória módosítása</h3>
                 <input type="hidden" name="Kategoria.Id" value="@Kategoria.Id" />
                 <div class="mb-3">
@@ -29,7 +31,7 @@
                     <button class="btn btn-success">Mentés</button>
                 </div>
                 <DataAnnotationsValidator />
-                <ValidationSummary />
+                <FormWarningsDisplay FormWarnings="FormWarnings" />
             </EditForm>
         }
         else
@@ -42,9 +44,8 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-
-    [SupplyParameterFromForm]
     public SzobaKategoria? Kategoria { get; set; }
+    private List<string> FormWarnings = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,8 +56,15 @@
     {
         if (Kategoria is not null)
         {
-            await SzobaRepo.UpdateKategoriaAsync(Kategoria);
-            Navigation.NavigateTo("/szobak/kategoriak");
+            FormWarnings = await Validation.IsSzobaKategoriaValid(Kategoria);
+
+            if (!FormWarnings.Any())
+            {
+                await SzobaRepo.UpdateKategoriaAsync(Kategoria);
+                Navigation.NavigateTo("/szobak/kategoriak");
+            }
+
+            return;
         }
     }
 }

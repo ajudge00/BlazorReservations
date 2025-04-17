@@ -1,6 +1,8 @@
 ﻿@page "/szobak/modosit/{id:int}"
 @inject ISzobaRepository SzobaRepo
+@inject IValidationService Validation
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>
     Szoba módosítása
@@ -16,7 +18,7 @@
     <div class="col-6">
         @if (Szoba is not null)
         {
-            <EditForm Enhance="true" method="post" FormName="UpdateSzobaForm" Model="Szoba" OnValidSubmit="UpdateSzoba" autocomplete="off">
+            <EditForm FormName="UpdateSzobaForm" Model="Szoba" OnValidSubmit="UpdateSzoba" autocomplete="off">
                 <h3>Szoba módosítása</h3>
                 <input type="hidden" name="Szoba.Id" value="@Szoba.Id" />
                 <div class="mb-3">
@@ -36,7 +38,7 @@
                     <button class="btn btn-success">Mentés</button>
                 </div>
                 <DataAnnotationsValidator />
-                <ValidationSummary />
+                <FormWarningsDisplay FormWarnings="FormWarnings"/>
             </EditForm>
         }
     </div>
@@ -46,11 +48,9 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-
-    [SupplyParameterFromForm]
     public Szoba? Szoba { get; set; }
-
     public List<SzobaKategoria> Kategoriak { get; set; } = new();
+    private List<string> FormWarnings = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,7 +60,14 @@
 
     private async Task UpdateSzoba()
     {
-        await SzobaRepo.UpdateAsync(Szoba);
-        Navigation.NavigateTo("/szobak");
+        FormWarnings = await Validation.IsSzobaValid(Szoba);
+
+        if (!FormWarnings.Any())
+        {
+            await SzobaRepo.UpdateAsync(Szoba);
+            Navigation.NavigateTo("/szobak");
+        }
+
+        return;
     }
 }

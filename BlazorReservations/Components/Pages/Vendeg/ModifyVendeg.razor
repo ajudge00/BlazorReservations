@@ -1,6 +1,8 @@
 ﻿@page "/vendegek/modosit/{id:int}"
 @inject IVendegRepository VendegRepo
+@inject IValidationService Validation
 @inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>
     Vendég módosítása
@@ -16,7 +18,7 @@
     <div class="col-6">
     @if(Vendeg is not null)
     {
-        <EditForm Enhance="true" method="post" FormName="UpdateVendegForm" Model="Vendeg" OnValidSubmit="UpdateVendeg" autocomplete="off">
+        <EditForm FormName="UpdateVendegForm" Model="Vendeg" OnValidSubmit="UpdateVendeg" autocomplete="off">
             <h3>Vendég módosítása</h3>
             <input type="hidden" name="Vendeg.Id" value="@Vendeg.Id"/>
             <div class="mb-3">
@@ -29,7 +31,7 @@
                 <button class="btn btn-success ">Mentés</button>
             </div>
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FormWarningsDisplay FormWarnings="FormWarnings"/>
         </EditForm>
     } else
     {
@@ -41,9 +43,8 @@
 @code {
     [Parameter]
     public int Id { get; set; }
-
-    [SupplyParameterFromForm]
     public Vendeg? Vendeg { get; set; }
+    private List<string> FormWarnings = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,7 +53,9 @@
 
     private async Task UpdateVendeg()
     {
-        if(Vendeg is not null)
+        FormWarnings = Validation.IsVendegValid(Vendeg);
+
+        if (!FormWarnings.Any())
         {
             await VendegRepo.UpdateAsync(Vendeg);
             Navigation.NavigateTo("/vendegek");

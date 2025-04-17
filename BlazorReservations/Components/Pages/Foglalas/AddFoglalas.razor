@@ -104,6 +104,9 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Ora = 8;
+        // Foglalas.EjszakakSzama = 1;
+
         Vendegek = await VendegRepo.ReadAllAsync();
         if (Vendegek is not null && Vendegek.Count != 0)
         {
@@ -126,7 +129,15 @@
         }
         else
         {
-            Foglalas.Kezdete = Foglalas.Kezdete.AddHours(Ora).AddMinutes(Perc);
+            var foglalasKezdete = new DateTime(
+                Foglalas.Kezdete.Year,
+                Foglalas.Kezdete.Month,
+                Foglalas.Kezdete.Day,
+                Ora,
+                Perc,
+                0
+            );
+            Foglalas.Kezdete = foglalasKezdete;
             FormWarnings = await Validation.IsFoglalasValid(Foglalas);
         }
 

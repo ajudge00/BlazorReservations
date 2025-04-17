@@ -46,7 +46,7 @@ namespace BlazorReservations.Repositories.Validation
                 var foglalasVege = GetFoglalasVege(foglalas.Kezdete, foglalas.EjszakakSzama);
 
                 var existingFoglalasokForSzoba = await _dbContext.Foglalasok
-                    .Where(f => f.SzobaId == foglalas.SzobaId)
+                    .Where(f => f.SzobaId == foglalas.SzobaId && f.Id != foglalas.Id)
                     .ToListAsync();
 
                 var overlapForSzobaExists = existingFoglalasokForSzoba.Any(f => (
@@ -64,13 +64,22 @@ namespace BlazorReservations.Repositories.Validation
             return result;
         }
 
-        public List<string> IsSzobaValid(Szoba szoba)
+        public async Task<List<string>> IsSzobaValid(Szoba szoba)
         {
             var result = new List<string>();
 
             if(szoba.SzobaSzam < 0)
             {
                 result.Add("Érvénytelen szobaszám.");
+            }
+            else
+            {
+                var existingSzoba = await _dbContext.Szobak.AnyAsync(sz => sz.Id != szoba.Id && sz.SzobaSzam == szoba.SzobaSzam);
+
+                if (existingSzoba)
+                {
+                    result.Add("Már létezik szoba ezzel a szobaszámmal.");
+                }
             }
 
             if(szoba.AgyakSzama < 1)
@@ -85,7 +94,7 @@ namespace BlazorReservations.Repositories.Validation
         {
             var result = new List<string>();
             var nameExists = await _dbContext.SzobaKategoriak
-                .AnyAsync(k => k.Megnevezes.ToLower().Equals(kategoria.Megnevezes.ToLower()));
+                .AnyAsync(k => k.Id != kategoria.Id && k.Megnevezes.ToLower().Equals(kategoria.Megnevezes.ToLower()));
  
             if (nameExists)
             {

@@ -41,7 +41,7 @@ else
                 <tr>
                     <th scope="row">@kat.Id</th>
                     <td>@kat.Megnevezes</td>
-                    <td>@kat.EgysegAr</td>
+                    <td>@($"{kat.EgysegAr:n0}")</td>
                     <td>
                         <a href="@($"/szobak/kategoriak/modosit/{kat.Id}")" class="btn btn-secondary">
                             <svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50">

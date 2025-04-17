@@ -1,7 +1,8 @@
 ﻿@page "/vendegek/uj"
 @inject IVendegRepository VendegRepo
-@inject NavigationManager Navigation
 @inject IValidationService Validation
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>
     Új vendég
@@ -15,7 +16,7 @@
 
 <div class="row justify-content-center mt-5">
     <div class="col-6">
-        <EditForm Enhance="true" method="post" FormName="CreateVendegForm" Model="Vendeg" OnValidSubmit="CreateVendeg" autocomplete="off">
+        <EditForm FormName="CreateVendegForm" Model="Vendeg" OnValidSubmit="CreateVendeg" autocomplete="off">
             <h3>Új vendég</h3>
             <div class="mb-3">
                 <label for="nev">Név:</label>
@@ -34,7 +35,6 @@
 
 
 @code {
-    [SupplyParameterFromForm]
     public Vendeg Vendeg { get; set; } = new();
     private List<string> FormWarnings = new();
 

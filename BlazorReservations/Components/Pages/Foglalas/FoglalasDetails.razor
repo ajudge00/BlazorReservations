@@ -4,7 +4,7 @@
 @inject IVendegRepository VendegRepo
 
 <PageTitle>
-    Foglalás részletei:
+    #@Foglalas?.Id Foglalás részletei
 </PageTitle>
 
 <a class="btn btn-primary" href="/foglalasok">
@@ -34,10 +34,14 @@
                 <li>Foglaló vendég: @Foglalas.VendegRef?.Nev</li>
                 <li>Plusz személyek száma: @Foglalas.SzemelyekSzama</li>
             </ul>
+            <p class="mb-3 mt-3">Megjegyzés: @(String.IsNullOrEmpty(Foglalas.Megjegyzes) ? "-" : Foglalas.Megjegyzes) </p>
             <h3>
-                Összköltség: @($"{Osszkoltseg:n0}") HUF
+                Összesen: @($"{Osszeg:n0}") HUF
             </h3>
         </div>
+    } else
+    {
+        <div>Nincs ilyen foglalás.</div>
     }
 </div>
 
@@ -45,11 +49,14 @@
     [Parameter]
     public int Id { get; set; }
     public Foglalas? Foglalas { get; set; }
-    public int Osszkoltseg { get; set; }
+    public int Osszeg { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Foglalas = await FoglalasRepo.ReadByIdAsync(Id);
-        Osszkoltseg = (Foglalas.SzemelyekSzama + 1) * Foglalas.EjszakakSzama * Foglalas.SzobaRef?.KategoriaRef?.EgysegAr ?? 0;
+        if(Foglalas is not null)
+        {
+            Osszeg = (Foglalas.SzemelyekSzama + 1) * Foglalas.EjszakakSzama * Foglalas.SzobaRef?.KategoriaRef?.EgysegAr ?? 0;
+        }
     }
 }

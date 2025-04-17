@@ -1,7 +1,8 @@
 ﻿@page "/szobak/uj"
 @inject ISzobaRepository SzobaRepo
-@inject NavigationManager Navigation
 @inject IValidationService Validation
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
 
 <PageTitle>
     Új szoba
@@ -15,7 +16,7 @@
 
 <div class="row justify-content-center mt-5">
     <div class="col-6">
-        <EditForm Enhance="true" method="post" FormName="CreateSzobaForm" Model="Szoba" OnValidSubmit="CreateSzoba" autocomplete="off">
+        <EditForm FormName="CreateSzobaForm" Model="Szoba" OnValidSubmit="CreateSzoba" autocomplete="off">
             <h3>Új szoba</h3>
             <div class="mb-3">
                 <label for="szobaszam">Szobaszám:</label>
@@ -47,11 +48,9 @@
 
 
 @code {
-    [SupplyParameterFromForm]
     public Szoba Szoba { get; set; } = new();
     public List<SzobaKategoria> Kategoriak { get; set; } = new();
     public bool KategoriaSelectIsDisabled = true;
-
     private List<string> FormWarnings = new();
 
     protected override async Task OnInitializedAsync()
@@ -65,7 +64,7 @@
 
     private async Task CreateSzoba()
     {
-        FormWarnings = Validation.IsSzobaValid(Szoba);
+        FormWarnings = await Validation.IsSzobaValid(Szoba);
 
         if (!FormWarnings.Any())
         {

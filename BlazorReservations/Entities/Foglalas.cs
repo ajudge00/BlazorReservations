@@ -11,7 +11,6 @@ namespace BlazorReservations.Entities
         public DateTime Kezdete { get; set; } = DateTime.Now;
 
         [Required]
-        [Range(1, 8)]
         public int EjszakakSzama { get; set; }
 
         [ForeignKey("VendegRef")]
