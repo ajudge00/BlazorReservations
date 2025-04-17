@@ -29,17 +29,7 @@
                 <button type="submit" class="btn btn-success">Mentés</button>
             </div>
             <DataAnnotationsValidator />
-            @if (FormWarnings.Count != 0)
-            {
-                <div class="alert alert-danger">
-                    <ul>
-                        @foreach(var warning in FormWarnings)
-                        {
-                            <li>@warning</li>
-                        }
-                    </ul>
-                </div>
-            }
+            <FormWarningsDisplay FormWarnings="FormWarnings" />
         </EditForm>
     </div>
 </div>

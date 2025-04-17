@@ -27,16 +27,15 @@
                 <li>Szobaszám: @Foglalas.SzobaRef?.SzobaSzam</li>
                 <li>Kategória: @Foglalas.SzobaRef?.KategoriaRef?.Megnevezes</li>
                 <li>Ágyak száma: @Foglalas.SzobaRef?.AgyakSzama</li>
-                <li>Egységár (HUF/fő/éjszaka): @Foglalas.SzobaRef?.KategoriaRef?.EgysegAr</li>
+                <li>Egységár (HUF/fő/éjszaka): @($"{Foglalas.SzobaRef?.KategoriaRef?.EgysegAr:n0}") HUF</li>
             </ul>
             <h3>Vendégek:</h3>
             <ul>
                 <li>Foglaló vendég: @Foglalas.VendegRef?.Nev</li>
-                <li>Vendégek összesen: @Foglalas.SzemelyekSzama</li>
+                <li>Plusz személyek száma: @Foglalas.SzemelyekSzama</li>
             </ul>
-            <h3>Összköltség: @(
-                    Foglalas.SzemelyekSzama * Foglalas.EjszakakSzama * @Foglalas.SzobaRef?.KategoriaRef?.EgysegAr
-                ) HUF
+            <h3>
+                Összköltség: @($"{Osszkoltseg:n0}") HUF
             </h3>
         </div>
     }
@@ -46,10 +45,11 @@
     [Parameter]
     public int Id { get; set; }
     public Foglalas? Foglalas { get; set; }
+    public int Osszkoltseg { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         Foglalas = await FoglalasRepo.ReadByIdAsync(Id);
-        
+        Osszkoltseg = (Foglalas.SzemelyekSzama + 1) * Foglalas.EjszakakSzama * Foglalas.SzobaRef?.KategoriaRef?.EgysegAr ?? 0;
     }
 }

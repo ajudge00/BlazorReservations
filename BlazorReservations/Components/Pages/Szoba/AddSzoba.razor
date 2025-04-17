@@ -1,6 +1,7 @@
 ﻿@page "/szobak/uj"
 @inject ISzobaRepository SzobaRepo
 @inject NavigationManager Navigation
+@inject IValidationService Validation
 
 <PageTitle>
     Új szoba
@@ -39,7 +40,7 @@
                 <button class="btn btn-success">Mentés</button>
             </div>
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FormWarningsDisplay FormWarnings="FormWarnings"/>
         </EditForm>
     </div>
 </div>
@@ -50,6 +51,8 @@
     public Szoba Szoba { get; set; } = new();
     public List<SzobaKategoria> Kategoriak { get; set; } = new();
     public bool KategoriaSelectIsDisabled = true;
+
+    private List<string> FormWarnings = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,7 +65,14 @@
 
     private async Task CreateSzoba()
     {
-        await SzobaRepo.CreateAsync(Szoba);
-        Navigation.NavigateTo("/szobak");
+        FormWarnings = Validation.IsSzobaValid(Szoba);
+
+        if (!FormWarnings.Any())
+        {
+            await SzobaRepo.CreateAsync(Szoba);
+            Navigation.NavigateTo("/szobak");
+        }
+
+        return;
     }
 }

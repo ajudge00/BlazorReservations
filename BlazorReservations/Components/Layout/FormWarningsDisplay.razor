@@ -1,0 +1,16 @@
+﻿@if (FormWarnings.Any())
+{
+    <div class="text-danger">
+        <ul>
+            @foreach (var warning in FormWarnings)
+            {
+                <li>@warning</li>
+            }
+        </ul>
+</div>
+}
+
+@code {
+    [Parameter]
+    public List<string>? FormWarnings { get; set; } = new(); 
+}

@@ -3,6 +3,7 @@
 @inject IVendegRepository VendegRepo
 @inject ISzobaRepository SzobaRepo
 @inject NavigationManager Navigation
+@inject IValidationService Validation
 
 <PageTitle>
     Új foglalás
@@ -14,7 +15,7 @@
     </svg> Mégse
 </a>
 
-<div class="row justify-content-center mt-5">
+<div class="row justify-content-center mt-3">
     <div class="col-6">
         <EditForm method="post" FormName="CreateFoglalasForm" Model="Foglalas" OnValidSubmit="CreateFoglalas" autocomplete="off">
             <h3>Új foglalás</h3>
@@ -69,7 +70,7 @@
                     }
                 </InputSelect>
 
-                <label class="form-label" for="szemelyek">Személyek száma</label>
+                <label class="form-label" for="szemelyek">Plusz személyek száma</label>
                 <InputNumber class="form-control mb-3" id="szemelyek" @bind-Value="Foglalas.SzemelyekSzama" />
 
                 <label class="form-label" for="megjegyzes">Megjegyzés</label>
@@ -79,7 +80,7 @@
                 <button class="btn btn-success">Mentés</button>
             </div>
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FormWarningsDisplay FormWarnings="FormWarnings" />
         </EditForm>
     </div>
 </div>
@@ -92,7 +93,8 @@
     public List<Szoba>? Szobak { get; set; }
     public bool VendegSelectIsDisabled = true;
     public bool SzobaSelectIsDisabled = true;
-    private DateTime MinDate = DateTime.Today;
+    // private DateTime MinDate = DateTime.Today;
+    private List<string> FormWarnings = new();
 
     [SupplyParameterFromForm]
     public int Ora { get; set; }
@@ -118,8 +120,22 @@
 
     private async Task CreateFoglalas()
     {
+        if (Ora < 0 || Ora > 23 || Perc < 0 || Perc > 59)
+        {
+            FormWarnings.Add("Érvénytelen időpont.");
+        }
+        else
+        {
+            Foglalas.Kezdete = Foglalas.Kezdete.AddHours(Ora).AddMinutes(Perc);
+            FormWarnings = await Validation.IsFoglalasValid(Foglalas);
+        }
 
-        await FoglalasRepo.CreateAsync(Foglalas);
-        Navigation.NavigateTo("/foglalasok");
+        if (!FormWarnings.Any())
+        {
+            await FoglalasRepo.CreateAsync(Foglalas);
+            Navigation.NavigateTo("/foglalasok");
+        }
+
+        return;
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/vendegek/uj"
 @inject IVendegRepository VendegRepo
 @inject NavigationManager Navigation
+@inject IValidationService Validation
 
 <PageTitle>
     Új vendég
@@ -26,7 +27,7 @@
                 <button class="btn btn-success">Mentés</button>
             </div>
             <DataAnnotationsValidator />
-            <ValidationSummary />
+            <FormWarningsDisplay FormWarnings="FormWarnings"/>
         </EditForm>
     </div>
 </div>
@@ -35,10 +36,18 @@
 @code {
     [SupplyParameterFromForm]
     public Vendeg Vendeg { get; set; } = new();
+    private List<string> FormWarnings = new();
 
     private async Task CreateVendeg()
     {
-        await VendegRepo.CreateAsync(Vendeg);
-        Navigation.NavigateTo("/vendegek");
+        FormWarnings = Validation.IsVendegValid(Vendeg);
+
+        if (!FormWarnings.Any())
+        {
+            await VendegRepo.CreateAsync(Vendeg);
+            Navigation.NavigateTo("/vendegek");
+        }
+
+        return;
     }
 }
