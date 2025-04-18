@@ -36,9 +36,9 @@ namespace BlazorReservations.Repositories
             if (filter is not null)
             {
 
-                if (filter.Id is not null)
+                if (filter.Nev is not null)
                 {
-                    query = query.Where(v => v.Id == filter.Id);
+                    query = query.Where(v => v.Nev.Contains(filter.Nev.Trim()));
                 }
 
                 if (filter.Szuletett is not null)

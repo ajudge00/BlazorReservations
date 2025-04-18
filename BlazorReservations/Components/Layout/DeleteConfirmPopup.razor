@@ -5,7 +5,7 @@
             <h3>Biztos törölni kívánja az elemet?</h3>
             @if (ItemName != null)
             {
-                <p><strong>@ItemName</strong></p>
+                <p><strong>@($"{ItemName}{Postfix}")</strong></p>
             }
             <div class="d-flex flex-row justify-content-end mt-3">
                 <button @onclick="Cancel" class="btn btn-secondary">
@@ -25,6 +25,9 @@
 
     [Parameter]
     public string? ItemName { get; set; }
+
+    [Parameter]
+    public string? Postfix { get; set; }
 
     [Parameter]
     public EventCallback OnCancel { get; set; }

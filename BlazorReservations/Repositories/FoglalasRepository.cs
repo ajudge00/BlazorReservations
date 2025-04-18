@@ -76,7 +76,11 @@ namespace BlazorReservations.Repositories
                     query = query.Where(f => f.EjszakakSzama == filter.EjszakakSzama);
                 }
 
-                if (filter.VendegNev is not null)
+                if(filter.VendegId is not null)
+                {
+                    query = query.Where(f => f.VendegId == filter.VendegId);
+                }
+                else if (filter.VendegNev is not null)
                 {
                     query = query.Where(f => f.VendegRef.Nev == filter.VendegNev);
                 }

@@ -83,6 +83,9 @@ else
                     <td>@szoba.AgyakSzama</td>
                     <td>@szoba.KategoriaRef?.Megnevezes</td>
                     <td>
+                        <a href="@($"/foglalasok/szoba/{szoba.Id}")" class="btn btn-secondary">
+                            Szoba foglalásai
+                        </a>
                         <a href="@($"/szobak/modosit/{szoba.Id}")" class="btn btn-secondary">
                             <Icon Type="edit"/>
                         </a>
@@ -98,6 +101,7 @@ else
 
 <DeleteConfirmPopup Visible="ShowDeleteConfirmDialog"
                     ItemName="@(_itemToDelete.SzobaSzam.ToString())"
+                    Postfix=". számú szoba"
                     OnCancel="CancelDeleteSzoba"
                     OnConfirm="() => ConfirmDeleteSzoba(_itemToDelete.Id)" />
 

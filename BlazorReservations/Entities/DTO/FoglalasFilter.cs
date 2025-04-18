@@ -6,6 +6,7 @@
         public DateTime? Kezdete { get; set; }
         public DateTime? Vege { get; set; }
         public int? EjszakakSzama { get; set; }
+        public int? VendegId { get; set; }
         public string? VendegNev { get; set; }
         public int? SzobaId { get; set; }
         public int? SzemelyekSzama { get; set; }

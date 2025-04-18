@@ -1,5 +1,6 @@
 ﻿@page "/foglalasok"
 @page "/foglalasok/vendeg/{vendegid:int}"
+@page "/foglalasok/szoba/{szobaid:int}"
 @inject IFoglalasRepository FoglalasRepo
 @inject NavigationManager Navigation
 @rendermode InteractiveServer
@@ -8,7 +9,7 @@
     Foglalások
 </PageTitle>
 
-<div class="d-flex flex-row justify-content-between mb-3" style="min-width: 1500px">
+<div class="d-flex flex-row justify-content-between mb-5" style="min-width: 1500px">
     <div id="left">
         <a class="btn btn-primary mb-3 add-btn" href="/foglalasok/uj">
             <Icon Type="add" />
@@ -122,6 +123,7 @@ else
 
 <DeleteConfirmPopup Visible="ShowDeleteConfirmDialog"
                     ItemName="@(_itemToDelete.Id.ToString())"
+                    Postfix=". ID-jű foglalás"
                     OnCancel="CancelDeleteFoglalas"
                     OnConfirm="() => ConfirmDeleteFoglalas(_itemToDelete.Id)" />
 
@@ -135,10 +137,26 @@ else
     [Parameter]
     public int? VendegId { get; set; }
 
+    [Parameter]
+    public int? SzobaId { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         FoglalasokAll = await FoglalasRepo.ReadAllAsync();
         Foglalasok = new List<Foglalas>(FoglalasokAll);
+
+        if (VendegId is not null && FoglalasokAll is not null && FoglalasokAll.Count != 0)
+        {
+            filter.VendegId = VendegId;
+            await FilterFoglalasok();
+            filter.VendegNev = Foglalasok[0]?.VendegRef?.Nev;
+        }
+        else if (SzobaId is not null && FoglalasokAll is not null && FoglalasokAll.Count != 0)
+        {
+            filter.SzobaId = SzobaId;
+            await FilterFoglalasok();
+            filter.SzobaId = SzobaId;
+        }
     }
 
     private void OpenConfirmPopup(Foglalas foglalas)

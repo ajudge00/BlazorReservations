@@ -33,6 +33,16 @@ namespace BlazorReservations.Repositories.Validation
         {
             var result = new List<string>();
 
+            if(foglalas.SzobaId == -1)
+            {
+                result.Add("Nincsenek szobák.");
+            }
+
+            if (foglalas.VendegId == -1)
+            {
+                result.Add("Nincsenek vendégek.");
+            }
+
             if (foglalas.Kezdete < DateTime.Today.Date)
             {
                 result.Add("Új foglalás legkorábban a mai napra vehető fel.");
