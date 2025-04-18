@@ -7,15 +7,56 @@
     Szobák
 </PageTitle>
 
-<a class="btn btn-primary mb-3" href="/szobak/uj">
-    <svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 24 24">
-        <path d="M 12 2 C 6.4889971 2 2 6.4889971 2 12 C 2 17.511003 6.4889971 22 12 22 C 17.511003 22 22 17.511003 22 12 C 22 6.4889971 17.511003 2 12 2 z M 12 4 C 16.430123 4 20 7.5698774 20 12 C 20 16.430123 16.430123 20 12 20 C 7.5698774 20 4 16.430123 4 12 C 4 7.5698774 7.5698774 4 12 4 z M 11 7 L 11 11 L 7 11 L 7 13 L 11 13 L 11 17 L 13 17 L 13 13 L 17 13 L 17 11 L 13 11 L 13 7 L 11 7 z"></path>
-    </svg>
-    Új szoba
-</a>
-<a class="btn btn-secondary mb-3" href="/szobak/kategoriak">
-    Kategóriák kezelése
-</a>
+<div class="d-flex justify-content-between align-items-center mb-3" style="min-width: 1450px">
+    <div class="me-3">
+        <a class="btn btn-primary mb-3 add-btn" href="/szobak/uj">
+            <Icon Type="add" />
+            Új szoba
+        </a>
+        <a class="btn btn-secondary mb-3" href="/szobak/kategoriak">
+            Kategóriák kezelése
+        </a>
+    </div>
+
+    <div class="d-flex align-items-center">
+        <EditForm FormName="FilterSzobaForm" Model="filter" OnValidSubmit="FilterSzobak" autocomplete="off" class="d-flex flex-wrap align-items-center gap-3">
+            <div class="d-flex align-items-center">
+                <label for="szobaszam" class="form-label me-2 mb-0">Szobaszám:</label>
+                <InputText id="szobaszam" class="form-control form-text" @bind-Value="filter.SzobaSzam"/>
+            </div>
+
+            <div class="d-flex align-items-center">
+                <label for="agyakszama" class="form-label me-2 mb-0">Ágyak száma:</label>
+                <InputNumber id="agyakszama" @bind-Value="filter.AgyakSzama" class="form-control" style="width: 150px" />
+            </div>
+
+            <div class="d-flex align-items-center">
+                <label for="kategoria" class="form-label me-2 mb-0">Kategória:</label>
+                <InputSelect id="kategoria" class="form-control form-select" @bind-Value="filter.KategoriaId" style="width: 200px">
+                    @if (SzobakAll is not null)
+                    {
+                        <option value="">Összes kategória</option>
+                        @foreach (var kat in SzobakAll.Select(sz => sz.KategoriaRef).Distinct().OrderBy(k => k.Megnevezes))
+                        {
+                            <option value="@kat.Id">@kat.Megnevezes</option>
+                        }
+                    }
+                </InputSelect>
+            </div>
+
+            <button type="submit" class="btn btn-success">
+                <Icon Type="filter" />
+                Szűrés
+            </button>
+        </EditForm>
+        <button class="btn btn-secondary m-1" @onclick="ResetFilters">
+            Alaphelyzet
+        </button>
+    </div>
+</div>
+
+
+
 
 @if (Szobak is null || Szobak.Count == 0)
 {
@@ -43,14 +84,10 @@ else
                     <td>@szoba.KategoriaRef?.Megnevezes</td>
                     <td>
                         <a href="@($"/szobak/modosit/{szoba.Id}")" class="btn btn-secondary">
-                            <svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 50 50">
-                                <path d="M 43.125 2 C 41.878906 2 40.636719 2.488281 39.6875 3.4375 L 38.875 4.25 L 45.75 11.125 C 45.746094 11.128906 46.5625 10.3125 46.5625 10.3125 C 48.464844 8.410156 48.460938 5.335938 46.5625 3.4375 C 45.609375 2.488281 44.371094 2 43.125 2 Z M 37.34375 6.03125 C 37.117188 6.0625 36.90625 6.175781 36.75 6.34375 L 4.3125 38.8125 C 4.183594 38.929688 4.085938 39.082031 4.03125 39.25 L 2.03125 46.75 C 1.941406 47.09375 2.042969 47.457031 2.292969 47.707031 C 2.542969 47.957031 2.90625 48.058594 3.25 47.96875 L 10.75 45.96875 C 10.917969 45.914063 11.070313 45.816406 11.1875 45.6875 L 43.65625 13.25 C 44.054688 12.863281 44.058594 12.226563 43.671875 11.828125 C 43.285156 11.429688 42.648438 11.425781 42.25 11.8125 L 9.96875 44.09375 L 5.90625 40.03125 L 38.1875 7.75 C 38.488281 7.460938 38.578125 7.011719 38.410156 6.628906 C 38.242188 6.246094 37.855469 6.007813 37.4375 6.03125 C 37.40625 6.03125 37.375 6.03125 37.34375 6.03125 Z"></path>
-                            </svg>
+                            <Icon Type="edit"/>
                         </a>
                         <button type="button" @onclick="() => OpenConfirmPopup(szoba)" class="btn btn-danger">
-                            <svg class="icon-outline" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="25" height="25" viewBox="0 0 24 24">
-                                <path d="M 10 2 L 9 3 L 3 3 L 3 5 L 4.109375 5 L 5.8925781 20.255859 L 5.8925781 20.263672 C 6.023602 21.250335 6.8803207 22 7.875 22 L 16.123047 22 C 17.117726 22 17.974445 21.250322 18.105469 20.263672 L 18.107422 20.255859 L 19.890625 5 L 21 5 L 21 3 L 15 3 L 14 2 L 10 2 z M 6.125 5 L 17.875 5 L 16.123047 20 L 7.875 20 L 6.125 5 z"></path>
-                            </svg>
+                            <Icon Type="delete"/>
                         </button>
                     </td>
                 </tr>
@@ -66,12 +103,15 @@ else
 
 @code {
     public List<Szoba>? Szobak;
+    public List<Szoba>? SzobakAll;
     private bool ShowDeleteConfirmDialog = false;
     private Szoba _itemToDelete = new();
+    private SzobaFilter filter = new();
 
     protected override async Task OnInitializedAsync()
     {
-        Szobak = await SzobaRepo.ReadAllAsync();
+        SzobakAll = await SzobaRepo.ReadAllAsync();
+        Szobak = new List<Szoba>(SzobakAll);
     }
 
     private void OpenConfirmPopup(Szoba Szoba)
@@ -91,5 +131,22 @@ else
         Szobak = await SzobaRepo.ReadAllAsync();
         ShowDeleteConfirmDialog = false;
         StateHasChanged();
+    }
+
+    private async Task FilterSzobak()
+    {
+        Szobak = await SzobaRepo.ReadFiltered(filter);
+        StateHasChanged();
+    }
+
+    private void ResetFilters()
+    {
+        if (SzobakAll is not null)
+        {
+            filter.Id = null;
+            filter.SzobaSzam = null;
+            filter.KategoriaId = null;
+            Szobak = new List<Szoba>(SzobakAll);
+        }
     }
 }

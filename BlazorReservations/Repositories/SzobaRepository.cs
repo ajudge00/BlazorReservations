@@ -71,11 +71,52 @@ namespace BlazorReservations.Repositories
             await _context.SaveChangesAsync();
         }
 
-        //public async Task<bool> CheckMegnevezesExistsAsync(string megnevezes, int? currentId = null)
-        //{
-        //    return await _context.SzobaKategoriak
-        //        .AnyAsync(k => k.Megnevezes == megnevezes &&
-        //                      (currentId == null || k.Id != currentId));
-        //}
+        public async Task<List<SzobaKategoria>> ReadKategoriaFiltered(SzobaKategoriaFilter filter)
+        {
+            var query = _context.SzobaKategoriak.AsQueryable();
+
+            if (filter is not null)
+            {
+                if (filter.Id is not null)
+                {
+                    query = query.Where(k => k.Id == filter.Id);
+                }
+
+                if (filter.EgysegAr is not null)
+                {
+                    query = query.Where(k => k.EgysegAr == filter.EgysegAr);
+                }
+
+            }
+
+            return await query.ToListAsync();
+        }
+
+        public async Task<List<Szoba>> ReadFiltered(SzobaFilter filter)
+        {
+            var query = _context.Szobak.AsQueryable();
+
+            if (filter is not null)
+            {
+                int szobaSzamInt = -1;
+                if (filter.SzobaSzam is not null && int.TryParse(filter.SzobaSzam, out szobaSzamInt))
+                {
+                    query = query.Where(sz => sz.SzobaSzam == szobaSzamInt);
+                }
+
+                if (filter.AgyakSzama is not null)
+                {
+                    query = query.Where(sz => sz.AgyakSzama == filter.AgyakSzama);
+                }
+
+                if (filter.KategoriaId is not null)
+                {
+                    query = query.Where(sz => sz.KategoriaId == filter.KategoriaId);
+                }
+
+            }
+
+            return await query.ToListAsync();
+        }
     }
 }

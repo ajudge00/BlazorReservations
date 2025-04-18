@@ -75,3 +75,16 @@ h1:focus {
     max-width: 80%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
+
+.header-sort {
+    cursor: pointer;
+}
+
+.header-sort:hover {
+    color: #1861ac;
+    text-decoration: underline;
+}
+
+.add-btn {
+    min-width: 120px;
+}

@@ -9,6 +9,7 @@ namespace BlazorReservations.Repositories
         Task CreateAsync(Foglalas foglalas);
         Task<List<Foglalas>> ReadAllAsync();
         Task<Foglalas> ReadByIdAsync(int id);
+        Task<List<Foglalas>> ReadFiltered(FoglalasFilter filter);
         Task UpdateAsync(Foglalas foglalas);
         Task DeleteAsync(int id);
     }

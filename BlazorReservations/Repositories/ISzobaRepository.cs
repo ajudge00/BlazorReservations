@@ -15,6 +15,7 @@ namespace BlazorReservations.Repositories
         Task<SzobaKategoria> ReadKategoriaByIdAsync(int id);
         Task UpdateKategoriaAsync(SzobaKategoria kategoria);
         Task DeleteKategoriaAsync(int id);
-        //Task<bool> CheckMegnevezesExistsAsync(string megnevezes, int? currentId = null);
+        Task<List<SzobaKategoria>> ReadKategoriaFiltered(SzobaKategoriaFilter filter);
+        Task<List<Szoba>> ReadFiltered(SzobaFilter filter);
     }
 }

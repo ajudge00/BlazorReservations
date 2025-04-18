@@ -29,6 +29,28 @@ namespace BlazorReservations.Repositories
             return await _context.Vendegek.FirstOrDefaultAsync(v => v.Id == id);
         }
 
+        public async Task<List<Vendeg>> ReadFiltered(VendegFilter filter)
+        {
+            var query = _context.Vendegek.AsQueryable();
+            
+            if (filter is not null)
+            {
+
+                if (filter.Id is not null)
+                {
+                    query = query.Where(v => v.Id == filter.Id);
+                }
+
+                if (filter.Szuletett is not null)
+                {
+                    query = query.Where(v => v.Szuletett == filter.Szuletett);
+                }
+
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task UpdateAsync(Vendeg vendeg)
         {
             _context.Entry(vendeg).State = EntityState.Modified;

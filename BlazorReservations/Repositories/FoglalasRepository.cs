@@ -33,6 +33,69 @@ namespace BlazorReservations.Repositories
                 .FirstOrDefaultAsync(f => f.Id == id);
         }
 
+        private DateTime GetFoglalasVege(DateTime kezdete, int ejszakakSzama)
+        {
+            return new DateTime(
+                kezdete.Year,
+                kezdete.Month,
+                kezdete.Day + ejszakakSzama,
+                11,
+                0,
+                0
+            );
+        }
+
+        public async Task<List<Foglalas>> ReadFiltered(FoglalasFilter filter)
+        {
+            var query = _context.Foglalasok.Include(f => f.VendegRef).AsQueryable();
+
+            if (filter is not null)
+            {
+                if (filter.Kezdete is not null && filter.Vege is null)
+                {
+                    query = query.Where(f => f.Kezdete.Date == filter.Kezdete.Value.Date);
+                }
+
+                if (filter.Vege is not null && filter.Kezdete is null)
+                {
+                    query = query.Where(f => f.Kezdete.AddDays(f.EjszakakSzama).Date == filter.Vege.Value.Date);
+                }
+
+                if(filter.Kezdete is not null && filter.Vege is not null)
+                {
+                    query = query.Where(f => 
+                                f.Kezdete <= filter.Vege &&
+                                f.Kezdete >= filter.Kezdete &&
+                                f.Kezdete.AddDays(f.EjszakakSzama).Date <= filter.Vege &&
+                                f.Kezdete.AddDays(f.EjszakakSzama).Date >= filter.Kezdete
+                                );
+                }
+
+                if (filter.EjszakakSzama is not null)
+                {
+                    query = query.Where(f => f.EjszakakSzama == filter.EjszakakSzama);
+                }
+
+                if (filter.VendegNev is not null)
+                {
+                    query = query.Where(f => f.VendegRef.Nev == filter.VendegNev);
+                }
+
+                if(filter.SzobaId is not null)
+                {
+                    query = query.Where(f => f.SzobaId == filter.SzobaId);
+                }
+
+                if(filter.SzemelyekSzama is not null)
+                {
+                    query = query.Where(f => f.SzemelyekSzama == filter.SzemelyekSzama);
+                }
+
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task UpdateAsync(Foglalas foglalas)
         {
             _context.Entry(foglalas).State = EntityState.Modified;
