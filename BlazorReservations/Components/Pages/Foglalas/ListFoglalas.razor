@@ -8,57 +8,66 @@
     Foglalások
 </PageTitle>
 
-<div class="d-flex justify-content-between align-items-center mb-3" style="min-width: 1500px">
-    <div class="me-3">
-        <a class="col-auto btn btn-primary mb-3 add-btn" href="/foglalasok/uj">
-            <Icon Type="add"/>
+<div class="d-flex flex-row justify-content-between mb-3" style="min-width: 1500px">
+    <div id="left">
+        <a class="btn btn-primary mb-3 add-btn" href="/foglalasok/uj">
+            <Icon Type="add" />
             Új foglalás
         </a>
     </div>
 
-    <div class="d-flex align-items-center">
-        <EditForm FormName="FilterFoglalasForm" Model="filter" OnValidSubmit="FilterFoglalasok" autocomplete="off" class="d-flex flex-wrap align-items-center gap-3">
-            <div class="d-flex align-items-center">
-                <label for="kezdete" class="form-label me-2 mb-0">Intervallum:</label>
-                <InputDate id="kezdete" class="form-control" @bind-Value="filter.Kezdete" />
-                <span class="mx-2 align-self-center">-</span>
-                <InputDate id="vege" class="form-control" @bind-Value="filter.Vege" />
-            </div>
-            <div class="d-flex align-items-center">
-                <label for="ejszakakszama" class="form-label me-2 mb-0">Éjszakák száma:</label>
-                <InputNumber id="ejszakakszama" @bind-Value="filter.EjszakakSzama" class="form-control" style="width: 100px"/>
+    <div id="right" class="d-flex flex-row">
+        <EditForm FormName="FilterFoglalasForm" Model="filter" OnValidSubmit="FilterFoglalasok" autocomplete="off" class="d-flex flex-row">
+            <div id="fields-container" class="d-flex flex-column">
+                <div id="field-row-1" class="d-flex flex-row gap-3 justify-content-end">
+                    <div class="d-flex align-items-center">
+                        <label for="kezdete" class="form-label me-2 mb-0">Intervallum:</label>
+                        <InputDate id="kezdete" class="form-control" @bind-Value="filter.Kezdete" />
+                        <span class="mx-2 align-self-center">-</span>
+                        <InputDate id="vege" class="form-control" @bind-Value="filter.Vege" />
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="ejszakakszama" class="form-label me-2 mb-0">Éjszakák száma:</label>
+                        <InputNumber id="ejszakakszama" @bind-Value="filter.EjszakakSzama" class="form-control" style="width: 100px" />
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <label for="szoba" class="form-label me-2 mb-0">Szoba:</label>
+                        <InputSelect id="szoba" class="form-control form-select" @bind-Value="filter.SzobaId" style="width: 200px">
+                            @if (FoglalasokAll is not null)
+                            {
+                                <option value="">Összes szoba</option>
+                                @foreach (var sz in FoglalasokAll.Select(f => f.SzobaRef).Distinct().OrderBy(sz => sz.SzobaSzam))
+                                {
+                                    <option value="@sz.Id">@sz.SzobaSzam</option>
+                                }
+                            }
+                        </InputSelect>
+                    </div>
+                </div>
+                <div id="field-row-2" class="d-flex flex-row gap-3 mt-2 justify-content-end">
+                    <div class="d-flex align-items-center">
+                        <label for="vendeg" class="form-label me-2 mb-0">Vendég:</label>
+                        <InputText id="vendeg" @bind-Value="filter.VendegNev" class="form-control" style="width: 200px"/>
+                    </div>
+                </div>
+
+                <div id="field-row-2" class="d-flex flex-row gap-3 mt-2 justify-content-end">
+                    <div class="d-flex align-items-center">
+                        <label for="szemelyekszama" class="form-label me-2 mb-0">Plusz személyek:</label>
+                        <InputNumber id="szemelyekszama" @bind-Value="filter.SzemelyekSzama" class="form-control" style="max-width: 200px" />
+                    </div>
+                </div>
             </div>
 
-            <div class="d-flex align-items-center">
-                <label for="vendeg" class="form-label me-2 mb-0">Vendég:</label>
-                <InputText id="vendeg" @bind-Value="filter.VendegNev" class="form-control" />
+            <div class="ms-3 align-items-start">
+                <button type="submit" class="btn btn-success">
+                    <Icon Type="filter" />
+                    Szűrés
+                </button>
             </div>
-    
-            <div class="d-flex align-items-center">
-                <label for="szoba" class="form-label me-2 mb-0">Szoba:</label>
-                <InputSelect id="szoba" class="form-control form-select" @bind-Value="filter.SzobaId">
-                    @if (FoglalasokAll is not null)
-                    {
-                        <option value="">Összes szoba</option>
-                        @foreach (var sz in FoglalasokAll.Select(f => f.SzobaRef).Distinct().OrderBy(sz => sz.SzobaSzam))
-                        {
-                            <option value="@sz.Id">@sz.SzobaSzam</option>
-                        }
-                    }
-                </InputSelect>
-            </div>
-
-            <div class="d-flex align-items-center">
-                <label for="szemelyekszama" class="form-label me-2 mb-0">Plusz személyek:</label>
-                <InputNumber id="szemelyekszama" @bind-Value="filter.SzemelyekSzama" class="form-control" />
-            </div>
-
-            <button type="submit" class="btn btn-success">
-                <Icon Type="filter" />
-                Szűrés
-            </button>
         </EditForm>
-        <button class="btn btn-secondary m-1" @onclick="ResetFilters">
+
+        <button class="btn btn-secondary ms-3" style="height: 38px" @onclick="ResetFilters">
             Alaphelyzet
         </button>
     </div>
